@@ -744,8 +744,7 @@ public class PowerShellExperimentalClientCodegen extends DefaultCodegen implemen
             // look up the model
             if (modelMaps.containsKey(codegenProperty.dataType)) {
                 CodegenModel model = modelMaps.get(codegenProperty.dataType);
-                if (model.getClassname().equalsIgnoreCase(codegenProperty.dataType))
-                {
+                if (model.getClassname().equalsIgnoreCase(codegenProperty.dataType)) {
                     LOGGER.warn(MessageFormat.format("TODO: There are circular references in the model {0}. " +
                             "Ignoring the same.",codegenProperty.getDataType()));
                     //Skip when you encounter circular references
