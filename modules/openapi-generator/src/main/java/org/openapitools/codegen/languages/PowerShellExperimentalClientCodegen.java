@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static java.util.UUID.randomUUID;
@@ -622,12 +623,6 @@ public class PowerShellExperimentalClientCodegen extends DefaultCodegen implemen
             }
         }
 
-        for (CodegenOperation operation : operationList) {
-            for (CodegenParameter cp : operation.allParams) {
-                cp.vendorExtensions.put("x-powershell-example", constructExampleCode(cp, modelMaps));
-            }
-        }
-
         return objs;
     }
 
@@ -748,7 +743,17 @@ public class PowerShellExperimentalClientCodegen extends DefaultCodegen implemen
         } else {
             // look up the model
             if (modelMaps.containsKey(codegenProperty.dataType)) {
-                return constructExampleCode(modelMaps.get(codegenProperty.dataType), modelMaps);
+                CodegenModel model = modelMaps.get(codegenProperty.dataType);
+                if (model.getClassname().equalsIgnoreCase(codegenProperty.dataType))
+                {
+                    LOGGER.warn(MessageFormat.format("TODO: There are circular references in the model {0}. " +
+                            "Ignoring the same.",codegenProperty.getDataType()));
+                    //Skip when you encounter circular references
+                    return "";
+                }
+                else {
+                    return constructExampleCode(model, modelMaps);
+                }
             } else {
                 //LOGGER.error("Error in constructing examples. Failed to look up the model " + codegenProperty.dataType);
                 return "\"TODO\"";
